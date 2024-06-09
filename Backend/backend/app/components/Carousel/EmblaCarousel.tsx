@@ -1,26 +1,27 @@
-'use client'
+"use client"
 
-import React from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { EmblaOptionsType } from 'embla-carousel'
-import { DotButton, useDotButton } from './EmblaCarouselDotButton'
+import useEmblaCarousel from 'embla-carousel-react'
+import Autoplay from 'embla-carousel-autoplay'
 import {
-  PrevButton,
   NextButton,
+  PrevButton,
   usePrevNextButtons
 } from './EmblaCarouselArrowButtons'
-import useEmblaCarousel from 'embla-carousel-react'
 
 type PropType = {
-  slides: void[]
+  slides: number[]
   options?: EmblaOptionsType
 }
 
 const EmblaCarousel: React.FC<PropType> = (props) => {
   const { slides, options } = props
-  const [emblaRef, emblaApi] = useEmblaCarousel(options)
+  const [emblaRef, emblaApi] = useEmblaCarousel(options, [
+    Autoplay({ playOnInit: true, delay: 5000 , stopOnInteraction : false})
+  ])
+  const [isPlaying, setIsPlaying] = useState(false)
 
-  const { selectedIndex, scrollSnaps, onDotButtonClick } =
-    useDotButton(emblaApi)
   const {
     prevBtnDisabled,
     nextBtnDisabled,
@@ -28,35 +29,52 @@ const EmblaCarousel: React.FC<PropType> = (props) => {
     onNextButtonClick
   } = usePrevNextButtons(emblaApi)
 
+  const onButtonAutoplayClick = useCallback(
+    (callback: () => void) => {
+      const autoplay = emblaApi?.plugins()?.autoplay
+      if (!autoplay) return
+
+      callback()
+    },
+    [emblaApi]
+  )
+
+  const toggleAutoplay = useCallback(() => {
+    const autoplay = emblaApi?.plugins()?.autoplay
+    if (!autoplay) return
+  }, [emblaApi])
+
+  useEffect(() => {
+    const autoplay = emblaApi?.plugins()?.autoplay
+    if (!autoplay) return
+  }, [emblaApi])
+
   return (
-    <section className="embla">
+    <div className="embla">
       <div className="embla__viewport" ref={emblaRef}>
         <div className="embla__container">
-          {<img
+        {slides.map((index) => (
+            <img
+            key={index}
             src = {"https://uttarakhandtourism.gov.in/sites/default/files/2020-07/Pithoragarh%20Banner1.jpg"}
-            alt = {` Image`}></img>}
+            alt = {` Image ${index + 1}`}></img>
+          ))}
         </div>
       </div>
 
       <div className="embla__controls">
         <div className="embla__buttons">
-          <PrevButton onClick={onPrevButtonClick} disabled={prevBtnDisabled} />
-          <NextButton onClick={onNextButtonClick} disabled={nextBtnDisabled} />
-        </div>
-
-        <div className="embla__dots">
-          {scrollSnaps.map((_, index) => (
-            <DotButton
-              key={index}
-              onClick={() => onDotButtonClick(index)}
-              className={'embla__dot'.concat(
-                index === selectedIndex ? ' embla__dot--selected' : ''
-              )}
-            />
-          ))}
+          <PrevButton
+            onClick={() => onButtonAutoplayClick(onPrevButtonClick)}
+            disabled={prevBtnDisabled}
+          />
+          <NextButton
+            onClick={() => onButtonAutoplayClick(onNextButtonClick)}
+            disabled={nextBtnDisabled}
+          />
         </div>
       </div>
-    </section>
+    </div>
   )
 }
 
