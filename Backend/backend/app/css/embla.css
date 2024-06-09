@@ -7,7 +7,7 @@
     --slide-size: 100%;
   }
   .embla__viewport {
-    /* overflow: hidden; */
+    overflow: hidden;
   }
   .embla__container {
     backface-visibility: hidden;
