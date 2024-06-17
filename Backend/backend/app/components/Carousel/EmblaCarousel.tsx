@@ -61,19 +61,6 @@ const EmblaCarousel: React.FC<PropType> = (props) => {
           ))}
         </div>
       </div>
-
-      <div className="embla__controls">
-        <div className="embla__buttons">
-          <PrevButton
-            onClick={() => onButtonAutoplayClick(onPrevButtonClick)}
-            disabled={prevBtnDisabled}
-          />
-          <NextButton
-            onClick={() => onButtonAutoplayClick(onNextButtonClick)}
-            disabled={nextBtnDisabled}
-          />
-        </div>
-      </div>
     </div>
   )
 }
