@@ -18,6 +18,7 @@ html {
 }
 
 :root {
+  --brand-footer: rgb(76, 77, 76);
   --brand-primary: rgb(47, 112, 193);
   --brand-secondary: rgb(116, 97, 195);
   --brand-alternative: rgb(19, 120, 134);
