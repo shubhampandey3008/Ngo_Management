@@ -15,6 +15,7 @@ export default function Footer() {
               </p>
             </div>
 
+            {/* This line would appear in phones */}
             <hr className="w-100 mt-12 md:hidden" />
 
             <div className="font-serif col-md-2 col-lg-2 col-xl-2 mx-auto mt-3">
