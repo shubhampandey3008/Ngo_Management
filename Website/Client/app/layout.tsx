@@ -4,6 +4,7 @@ import "./globals.css";
 import "./css/base.css";
 import "./css/embla.css";
 import Footer from "./components/footer/Footer";
+import Navbar from "./components/navbar/Navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -34,8 +35,11 @@ export default function RootLayout({
           rel="stylesheet"
         ></link>
       </head>
-      <body className={inter.className}>{children}</body>
-      <Footer />
+      <body className={inter.className}>
+        <Navbar />
+        {children}
+        <Footer />
+      </body>
     </html>
   );
 }
