@@ -1,10 +1,12 @@
 import cors from "cors";
+import './config/config'
 import express, { Application } from "express";
 import ip from "ip";
 import { Code } from "./enum/Code";
 import { Status } from "./enum/Status";
 import { HttpResponse } from "./domain/response";
-import patientRoutes from "./routes/patients.routes";
+import studentRoutes from "./routes/student.routes";
+import mongoose from "mongoose";
 
 export class App {
   private readonly app: Application;
@@ -20,12 +22,16 @@ export class App {
   }
 
   listen(): void {
-    this.app.listen(this.port);
-    console.info(`${this.APPLICATION_RUNNING} ${ip.address()} : ${this.port}`);
+    mongoose.connect(process.env.MONGO_STRING || "")
+    .then(()=>{
+      console.log("Connected to Database")
+      this.app.listen(this.port);
+      console.info(`${this.APPLICATION_RUNNING} ${ip.address()} : ${this.port}`);
+    })
   }
 
   private routes(): void {
-    this.app.use("/patients", patientRoutes);
+    this.app.use("/students", studentRoutes);
     this.app.get("/", (req, res) => {
       res
         .status(Code.OK)

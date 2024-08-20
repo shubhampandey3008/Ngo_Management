@@ -1,6 +1,6 @@
 "use client";
 
-import { Student_Study } from "@/app/students/student_study";
+import { Student_Study } from "@/app/students/[profile]/student_study";
 import {
   Table,
   TableHeader,
@@ -66,11 +66,12 @@ const columns = [
   },
 ];
 
-export default function StudentTable({
-  student_study,
-}: {
-  student_study: Student_Study[];
-}) {
+// export default function StudentTable({
+//   student_study,
+// }: {
+//   student_study: Student_Study[];
+// }) {
+  export default function StudentTable() {
   return (
     <Table aria-label="Example table with dynamic content">
       <TableHeader columns={columns}>
