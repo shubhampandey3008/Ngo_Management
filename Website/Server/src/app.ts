@@ -7,6 +7,7 @@ import { Status } from "./enum/Status";
 import { HttpResponse } from "./domain/response";
 import studentRoutes from "./routes/student.routes";
 import mongoose from "mongoose";
+import { studentStudyRoutes } from "./routes/studentStudy.routes";
 
 export class App {
   private readonly app: Application;
@@ -32,6 +33,7 @@ export class App {
 
   private routes(): void {
     this.app.use("/students", studentRoutes);
+    this.app.use("/studentStudy" , studentStudyRoutes);
     this.app.get("/", (req, res) => {
       res
         .status(Code.OK)
