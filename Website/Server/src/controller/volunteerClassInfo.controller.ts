@@ -7,7 +7,6 @@ import { Status } from "../enum/Status";
 export async function addVolunteerClassInfo(req : Request , res : Response)
 {
     try {
-        // Adding new Volunteer Info
         const volunteerId = req.body.id;
         const volunteerClassInfo = req.body.volunteerClassInfo;
 
