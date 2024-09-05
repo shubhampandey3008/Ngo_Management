@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { setStudentStudy } from "../controller/studentStudy.controller";
+import { addStudentStudy } from "../controller/studentStudy.controller";
 
 const studentStudyRoutes = Router();
 
-studentStudyRoutes.post("/set", setStudentStudy);
+studentStudyRoutes.post("/add", addStudentStudy);
 
 export {studentStudyRoutes};
