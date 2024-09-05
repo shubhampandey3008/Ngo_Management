@@ -8,6 +8,8 @@ import { HttpResponse } from "./domain/response";
 import studentRoutes from "./routes/student.routes";
 import mongoose from "mongoose";
 import { studentStudyRoutes } from "./routes/studentStudy.routes";
+import volunteerRoutes from "./routes/volunteer.routes";
+import volunteerClassRoutes from "./routes/volunteerClassInfo.routes";
 
 export class App {
   private readonly app: Application;
@@ -34,6 +36,8 @@ export class App {
   private routes(): void {
     this.app.use("/students", studentRoutes);
     this.app.use("/studentStudy" , studentStudyRoutes);
+    this.app.use("/volunteer" , volunteerRoutes);
+    this.app.use("/volunteerClassInfo" , volunteerClassRoutes);
     this.app.get("/", (req, res) => {
       res
         .status(Code.OK)

@@ -1,6 +1,9 @@
 "use client";
 
-import { Student_Study } from "@/app/students/[profile]/student_study";
+import { Student } from "@/app/students/student_info";
+import { Student_Study } from "@/app/students/student_study";
+import { Volunteer } from "@/app/volunteers/volunteer";
+import { Volunteer_Details } from "@/app/volunteers/volunteer_record";
 import {
   Table,
   TableHeader,
@@ -11,43 +14,7 @@ import {
   getKeyValue,
 } from "@nextui-org/react";
 
-const rows = [
-  {
-    key: "1",
-    sno: "Tony Reichert",
-    date: "CEO",
-    attendance: "Active",
-    teacher: "asdf",
-  },
-  {
-    key: "1",
-    sno: "Tony Reichert",
-    date: "CEO",
-    attendance: "Active",
-    teacher: "asdf",
-  },
-  {
-    key: "1",
-    sno: "Tony Reichert",
-    date: "CEO",
-    attendance: "Active",
-
-    teacher: "asdf",
-  },
-  {
-    key: "1",
-    sno: "Tony Reichert",
-    date: "CEO",
-    attendance: "Active",
-    teacher: "asdf",
-  },
-];
-
-const columns = [
-  {
-    key: "sno",
-    label: "SNo",
-  },
+const studentColumns = [
   {
     key: "date",
     label: "DATE",
@@ -66,20 +33,57 @@ const columns = [
   },
 ];
 
-// export default function StudentTable({
-//   student_study,
-// }: {
-//   student_study: Student_Study[];
-// }) {
-  export default function StudentTable() {
+const volunteerColumns = [
+  {
+    key:"date",
+    lable:"DATE"
+  },
+  {
+    key:"attendance",
+    lable:"ATTENDANCE"
+  },
+  {
+    key:"students",
+    lable:"STUDENTS"
+  },
+]
+
+export function StudentTable(
+  {student} : {student : Student}
+) {
+// Creating row with the Student Study Information
+const rows : Student_Study[] = student.studentStudy
   return (
     <Table aria-label="Example table with dynamic content">
-      <TableHeader columns={columns}>
+      <TableHeader columns={studentColumns}>
         {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
       </TableHeader>
       <TableBody items={rows}>
         {(item) => (
-          <TableRow key={item.key}>
+          <TableRow key={item._id}>
+            {(columnKey) => (
+              <TableCell>{getKeyValue(item, columnKey)}</TableCell>
+            )}
+          </TableRow>
+        )}
+      </TableBody>
+    </Table>
+  );
+}
+
+export function VolunteerTable(
+  {volunteer} : {volunteer : Volunteer}
+) {
+// Creating row with the Volunteer's Weekend Information
+const rows : Volunteer_Details[] = volunteer.weekend_details
+  return (
+    <Table aria-label="Example table with dynamic content">
+      <TableHeader columns={studentColumns}>
+        {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
+      </TableHeader>
+      <TableBody items={rows}>
+        {(item) => (
+          <TableRow key={item._id}>
             {(columnKey) => (
               <TableCell>{getKeyValue(item, columnKey)}</TableCell>
             )}

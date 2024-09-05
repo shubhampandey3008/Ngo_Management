@@ -1,18 +1,18 @@
-import {StudentTable} from "../../components/tableTemplate/tableTemplate";
 import Image from "next/image";
-import { Student } from "../student_info";
+import { Volunteer } from "../volunteer";
+import { VolunteerTable } from "@/app/components/tableTemplate/tableTemplate";
 
-async function getStudent(profile : string | string[] | undefined): Promise<Student> {
+async function getStudent(profile : string | string[] | undefined): Promise<Volunteer> {
   const res = await fetch(`http://192.168.1.9:3000/students/${profile}`);
-  const data : Student= await res.json();
+  const data : Volunteer = await res.json();
 
   return data;
 }
 
 // `app/page.tsx` is the UI for the `/` URL
-export default async function StudentPage({params} : {params : {profile : string}}) {
-  const studentId = params.profile;
-  const student: Student = await getStudent(studentId);
+export default async function VolunteerPage({params} : {params : {profile : string}}) {
+  const volunteerId = params.profile;
+  const volunteer: Volunteer = await getStudent(volunteerId);
 
   return (
     <>
@@ -32,29 +32,29 @@ export default async function StudentPage({params} : {params : {profile : string
               Id : 8823
             </div>
             <div className="text-center">
-              Name : {student.name}
+              Name : {volunteer.name}
             </div>
           </div>
           <div className="border-4 border-purple-300 m-2 grid grid-cols-2">
             <div className="text-center">
-              Class : {student.class}
+              Class : {volunteer.phone_no}
             </div>
             <div className="text-center">
-              Mother Name : {student.mName}
+              Mother Name : {volunteer.email}
             </div>
           </div>
           <div className="border-4 border-purple-300 m-2 grid grid-cols-2">
             <div className="text-center">
-              DOB : {student.dob}
+              DOJ : {volunteer.doj}
             </div>
-            <div className="text-center">
+            {/* <div className="text-center">
               DOJ : {student.doj}
-            </div>
+            </div> */}
           </div>
         </div>
         </div>
         <div className="border-4 border-blue-200 m-5 w-2/3">
-          <StudentTable student={student}/>
+          <VolunteerTable volunteer={volunteer}/>
         </div>
       </div>
     </>
