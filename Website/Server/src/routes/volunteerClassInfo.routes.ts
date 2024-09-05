@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { addVolunteerClassInfo } from "../controller/volunteerClassInfo.controller";
 
 const volunteerClassRoutes = Router();
 
