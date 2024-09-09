@@ -36,15 +36,15 @@ const studentColumns = [
 const volunteerColumns = [
   {
     key:"date",
-    lable:"DATE"
+    label:"DATE"
   },
   {
     key:"attendance",
-    lable:"ATTENDANCE"
+    label:"ATTENDANCE"
   },
   {
     key:"students",
-    lable:"STUDENTS"
+    label:"STUDENTS"
   },
 ]
 
@@ -71,21 +71,41 @@ const rows : Student_Study[] = student.studentStudy
   );
 }
 
-export function VolunteerTable(
-  {volunteer} : {volunteer : Volunteer}
+const StudentLinks = ({ studentNames, studentUrl }: { studentNames: string[], studentUrl: string[] }) => {
+  return (
+    <div className="flex flex-wrap gap-2">
+      {studentNames.map((name, index) => (
+        <a 
+          href={studentUrl[index]} 
+          key={index} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="text-blue-600 font-bold hover:underline"
+        >
+          {name}
+        </a>
+      ))}
+    </div>
+  );
+};
+
+
+export async function VolunteerTable(
+  {studentNames , studentUrl , rows} : {studentNames : string[] , studentUrl : string[] , rows: Volunteer_Details[]}
 ) {
-// Creating row with the Volunteer's Weekend Information
-const rows : Volunteer_Details[] = volunteer.weekend_details
+
   return (
     <Table aria-label="Example table with dynamic content">
-      <TableHeader columns={studentColumns}>
+      <TableHeader columns={volunteerColumns}>
         {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
       </TableHeader>
       <TableBody items={rows}>
         {(item) => (
           <TableRow key={item._id}>
             {(columnKey) => (
-              <TableCell>{getKeyValue(item, columnKey)}</TableCell>
+              <TableCell>{(columnKey == 'students')?(
+                <StudentLinks studentNames={studentNames}  studentUrl = {studentUrl} />
+              ): getKeyValue(item, columnKey)}</TableCell>
             )}
           </TableRow>
         )}

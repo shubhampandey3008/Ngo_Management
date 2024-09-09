@@ -7,7 +7,6 @@ export default function StudentLayout({
     <section>
       {/* Include shared UI here e.g. a header or sidebar */}
       <nav></nav>
-      Hello guyzzzzz
       {children}
     </section>
   );
