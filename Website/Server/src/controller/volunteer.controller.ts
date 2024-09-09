@@ -4,7 +4,7 @@ import { Code } from "../enum/Code";
 import { HttpResponse } from "../domain/response";
 import { Status } from "../enum/Status";
 
-export async function createVolunteer(res : Response , req : Request)
+export async function createVolunteer(req : Request , res : Response)
 {
     try {
         await VolunteerModel.create(req.body);
@@ -25,7 +25,7 @@ export async function createVolunteer(res : Response , req : Request)
 export async function getVolunteer(req : Request , res : Response)
 {
     try {
-        const volunteerId = req.query.id;
+        const volunteerId = req.params.id;
         const volunteer = await VolunteerModel.findById(volunteerId);
         res.status(Code.OK).json(volunteer)
     } catch (error) {
