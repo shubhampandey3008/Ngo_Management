@@ -34,16 +34,16 @@ const Navbar = () => {
                     
                     
                         <a href='/' className='text-white hover:bg-white hover:text-black rounded-lg p-2'>
-                            Campaign
+                            Add Volunteer
                         </a>
                     
                     
                         <a href='/' className='text-white hover:bg-white hover:text-black rounded-lg p-2'>
-                            Get involved
+                            Add Student
                         </a>
                     
                     
-                        <a href='/' className='text-white hover:bg-white hover:text-black rounded-lg p-2'>
+                        {/* <a href='/' className='text-white hover:bg-white hover:text-black rounded-lg p-2'>
                             Media Centre
                         </a>
                     
@@ -55,7 +55,7 @@ const Navbar = () => {
                     
                         <a href='/' className='text-white hover:bg-white hover:text-black rounded-lg p-2'>
                             Contact Us
-                        </a>
+                        </a> */}
                     </div>
                 </div>
                 <div className='md:hidden flex items-center'>
