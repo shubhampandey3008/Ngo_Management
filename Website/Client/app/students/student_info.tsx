@@ -4,7 +4,7 @@ export type Student = {
   _id: string;
   img: string;
   name: string;
-  class: number;
+  class: string;
   mName: string;
   dob: string;
   doj: string;

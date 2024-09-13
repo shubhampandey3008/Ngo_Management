@@ -10,7 +10,7 @@ const StudentStudySchema = new mongoose.Schema({
 const StudentSchema = new mongoose.Schema({
     img : String,
     name:{type:String , required:true},
-    class:Number,
+    class:String,
     mName:String,
     dob:Date,
     doj:Date,

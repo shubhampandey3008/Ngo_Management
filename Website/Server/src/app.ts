@@ -58,6 +58,6 @@ export class App {
 
   private middleWare(): void {
     this.app.use(cors({ origin: "*" }));
-    this.app.use(express.json());
+    this.app.use(express.json({limit : '2mb'}));
   }
 }
