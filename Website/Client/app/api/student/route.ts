@@ -5,7 +5,7 @@ export async function POST(request: Request) {
   try {
     const data = await request.json()
     
-    const response = await fetch('http://192.168.22.180:3000/students/create', {
+    const response = await fetch('http://192.168.61.30:3000/students/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -20,10 +20,9 @@ export async function POST(request: Request) {
           "studentStudy":[]
         }),
       });
-
-    console.log('Received student data:', data)
-
-    return NextResponse.json({ message: 'Student profile created successfully' }, { status: 201 })
+    
+      const studentData = await response.json();
+      return NextResponse.redirect(new URL(`/students/${studentData['data']['_id']}` , request.url))
   } catch (error) {
     console.error('Error processing student data:', error)
     return NextResponse.json({ error: 'Failed to process student data' }, { status: 500 })

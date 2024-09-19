@@ -11,26 +11,24 @@ import { CalendarIcon, Camera, User } from "lucide-react"
 import { format } from "date-fns"
 import ReactCrop, { type Crop, type PixelCrop, centerCrop, makeAspectCrop } from 'react-image-crop'
 import 'react-image-crop/dist/ReactCrop.css'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useRouter } from 'next/navigation'
-
+import { redirect, useRouter } from 'next/navigation'
 
 type ValidationErrors = {
   name?: string;
-  className?: string;
-  motherName?: string;
-  dob?: string;
+  phoneNo?: string;
+  email?: string;
   doj?: string;
   profilePicture?: string;
 }
 
-export default function StudentProfileForm() {
+export default function VolunteerProfileForm() {
 
-  const router = useRouter();
+  const router = useRouter()
+
+  
   const [name, setName] = useState('')
-  const [className, setClassName] = useState('')
-  const [motherName, setMotherName] = useState('')
-  const [dob, setDob] = useState<Date | undefined>()
+  const [phoneNo, setPhoneNo] = useState('')
+  const [email, setEmail] = useState('')
   const [doj, setDoj] = useState<Date | undefined>()
   const [image, setImage] = useState<string | null>(null)
   const [crop, setCrop] = useState<Crop>()
@@ -112,7 +110,6 @@ export default function StudentProfileForm() {
         completedCrop.height
       )
 
-      // Convert canvas to base64 string
       const base64Image = canvas.toDataURL('image/png')
       return base64Image
     } catch (error) {
@@ -140,9 +137,10 @@ export default function StudentProfileForm() {
   const validateForm = (): ValidationErrors => {
     const newErrors: ValidationErrors = {}
     if (!name.trim()) newErrors.name = 'Name is required'
-    if (!className.trim()) newErrors.className = 'Class is required'
-    if (!motherName.trim()) newErrors.motherName = "Mother's name is required"
-    if (!dob) newErrors.dob = 'Date of birth is required'
+    if (!phoneNo.trim()) newErrors.phoneNo = 'Phone number is required'
+    else if (!/^\d{10}$/.test(phoneNo)) newErrors.phoneNo = 'Phone number must be 10 digits'
+    if (!email.trim()) newErrors.email = 'Email is required'
+    else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = 'Invalid email format'
     if (!doj) newErrors.doj = 'Date of joining is required'
     if (!image || !isCropped) newErrors.profilePicture = 'Please select and crop a profile picture'
     return newErrors
@@ -154,9 +152,8 @@ export default function StudentProfileForm() {
     setErrors(newErrors)
     setTouched({
       name: true,
-      className: true,
-      motherName: true,
-      dob: true,
+      phoneNo: true,
+      email: true,
       doj: true,
       profilePicture: true,
     })
@@ -167,37 +164,30 @@ export default function StudentProfileForm() {
           throw new Error('Image not selected or not cropped')
         }
 
-        // Upload image to cloud (replace with your actual upload logic)
-        // const uploadedImageUrl = await uploadToCloud(image)
-
-        // Format dates as YYYY/MM/DD
-        const formattedDob = dob ? format(dob, 'yyyy/MM/dd') : ''
         const formattedDoj = doj ? format(doj, 'yyyy/MM/dd') : ''
 
-        // Here you would typically send all the form data to your backend
-        const studentData = {
+        const volunteerData = {
           name : name,
-          class: className,
-          motherName : motherName,
-          dob: dob,
-          doj: doj,
+          phoneNo : phoneNo,
+          email : email,
+          doj: formattedDoj,
           profilePicture: image
         }
 
         // Send data to the API route
-      const apiResponse = await fetch('/api/student', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(studentData),
-      });
+        const apiResponse = await fetch('/api/volunteer', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(volunteerData),
+        })
 
-      if (!apiResponse.ok) {
-        throw new Error('Failed to submit form')
-      }
+        if (!apiResponse.ok) {
+          throw new Error('Failed to submit form')
+        }
 
-      router.push(apiResponse.url);
+        router.push(apiResponse.url)
 
         alert('Form submitted successfully!')
       } catch (error) {
@@ -287,70 +277,34 @@ export default function StudentProfileForm() {
         )}
       </div>
       <div>
-        <Label htmlFor="class">Class</Label>
-        <Select value={className} onValueChange={setClassName}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select a class" />
-          </SelectTrigger>
-          <SelectContent>
-            {['KG', ...[...Array(12)].map((_, i) => `${i + 1}`)].map((cls) => (
-              <SelectItem key={cls} value={cls}>
-                {cls === 'KG' ? 'KG' : `${cls}th`}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {touched.className && errors.className && (
-          <p id="class-error" className="text-red-500 text-sm mt-1">{errors.className}</p>
-        )}
-      </div>
-      <div>
-        <Label htmlFor="motherName">Mother's Name</Label>
+        <Label htmlFor="phoneNo">Phone Number</Label>
         <Input
-          id="motherName"
-          value={motherName}
-          onChange={(e) => setMotherName(e.target.value)}
-          onBlur={() => handleBlur('motherName')}
-          className={touched.motherName && errors.motherName ? 'border-red-500' : ''}
-          aria-invalid={touched.motherName && errors.motherName ? 'true' : 'false'}
-          aria-describedby={touched.motherName && errors.motherName ? 'mother-name-error' : undefined}
+          id="phoneNo"
+          value={phoneNo}
+          onChange={(e) => setPhoneNo(e.target.value)}
+          onBlur={() => handleBlur('phoneNo')}
+          className={touched.phoneNo && errors.phoneNo ? 'border-red-500' : ''}
+          aria-invalid={touched.phoneNo && errors.phoneNo ? 'true' : 'false'}
+          aria-describedby={touched.phoneNo && errors.phoneNo ? 'phone-error' : undefined}
         />
-        {touched.motherName && errors.motherName && (
-          <p id="mother-name-error" className="text-red-500 text-sm mt-1">{errors.motherName}</p>
+        {touched.phoneNo && errors.phoneNo && (
+          <p id="phone-error" className="text-red-500 text-sm mt-1">{errors.phoneNo}</p>
         )}
       </div>
       <div>
-        <Label>Date of Birth</Label>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              className={`w-full justify-start text-left font-normal ${
-                !dob ? "text-muted-foreground" : ""
-              } ${touched.dob && errors.dob ? 'border-red-500' : ''}`}
-              onBlur={() => handleBlur('dob')}
-              aria-invalid={touched.dob && errors.dob ? 'true' : 'false'}
-              aria-describedby={touched.dob && errors.dob ? 'dob-error' : undefined}
-            >
-              {dob ? format(dob, "yyyy/MM/dd") : "Pick a date"}
-              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="single"
-              selected={dob}
-              onSelect={(date) => { 
-                setDob(date); 
-                handleBlur('dob');
-              }}
-              disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
-              initialFocus
-            />
-          </PopoverContent>
-        </Popover>
-        {touched.dob && errors.dob && (
-          <p id="dob-error" className="text-red-500 text-sm mt-1">{errors.dob}</p>
+        <Label htmlFor="email">Email</Label>
+        <Input
+          id="email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          onBlur={() => handleBlur('email')}
+          className={touched.email && errors.email ? 'border-red-500' : ''}
+          aria-invalid={touched.email && errors.email ? 'true' : 'false'}
+          aria-describedby={touched.email && errors.email ? 'email-error' : undefined}
+        />
+        {touched.email && errors.email && (
+          <p id="email-error" className="text-red-500 text-sm mt-1">{errors.email}</p>
         )}
       </div>
       <div>

@@ -3,7 +3,7 @@ import { Student } from "../student_info"
 import { StudentTable } from "@/app/components/tableTemplate/tableTemplate"
 
 async function getStudent(profile: string | string[] | undefined): Promise<Student> {
-  const res = await fetch(`http://192.168.22.180:3000/students/${profile}`)
+  const res = await fetch(`http://192.168.61.30:3000/students/${profile}`)
   const data: Student = await res.json()
   return data
 }
@@ -22,7 +22,7 @@ export default async function StudentPage({ params }: { params: { profile: strin
           <div className="md:w-1/3 p-6 bg-gray-50">
             <div className="mb-6">
               <Image
-                src="/student_school.jpg"
+                src={student.img}
                 width={300}
                 height={300}
                 alt="Picture of the Student"

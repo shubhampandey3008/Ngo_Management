@@ -7,6 +7,7 @@ const Volunteer_Details = new mongoose.Schema({
 });
 
 const VolunteerSchema = new mongoose.Schema({
+    img: String,
     name: String,
     phone_no: Number,
     email: String,
