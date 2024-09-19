@@ -26,7 +26,8 @@ export async function createStudent(req : Request , res : Response) : Promise<vo
         res.status(Code.OK).json(new HttpResponse(
             Code.OK,
             Status.OK,
-            "Request Completed"
+            "Request Completed",
+            student
         ))
     } catch (error) {
         res.status(Code.INTERNAL_SERVER_ERROR).json(new HttpResponse(
