@@ -1,13 +1,13 @@
-import VolunteerAttendanceForm from "./Form/volunteerAttForm";
+import StudentAttendanceForm from "./Form/studentAttForm";
 
 interface NameData {
     _id: string;
     name: string;
   }
   
-interface FetchDataResult {
+  interface FetchDataResult {
     studentNames: NameData[];
-    volunteerNames: NameData[];
+    teacherNames: NameData[];
   }
 
 async function fetchData() : Promise<FetchDataResult>
@@ -29,31 +29,31 @@ async function fetchData() : Promise<FetchDataResult>
     
         const studentNames = await studentResponse.json();
     
-        const volunteerResponse = await fetch(`${baseURL}/volunteer/getNames` , {
+        const teacherResponse = await fetch(`${baseURL}/volunteer/getNames` , {
             method: 'GET',
             headers : {
                 'Content-Type': 'application/json',
             }
         });
 
-        if (!volunteerResponse.ok) {
+        if (!teacherResponse.ok) {
             throw new Error('Failed to fetch teacher names');
         }
     
-        const volunteerNames = await volunteerResponse.json();
+        const teacherNames = await teacherResponse.json();
     
-        return {studentNames , volunteerNames};
+        return {studentNames , teacherNames};
     } catch (error) {
         console.error("Following error occured : " , {error})
-        return {studentNames:[] , volunteerNames:[]}
+        return {studentNames:[] , teacherNames:[]}
     }
 }
 
-export default async function volunteerAttPage(){
+export default async function addStudentAttendancePage()
+{
+    const {studentNames , teacherNames} = await fetchData()
 
-   const {studentNames , volunteerNames} = await fetchData()
-    
     return (
-        <VolunteerAttendanceForm studentNames={studentNames} volunteerNames={volunteerNames} />
+        <StudentAttendanceForm studentNames={studentNames} teacherNames={teacherNames}/>
     )
 }

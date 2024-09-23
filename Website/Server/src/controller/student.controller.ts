@@ -37,3 +37,21 @@ export async function createStudent(req : Request , res : Response) : Promise<vo
         ));
     }
 }
+
+export async function getStudentNames(req : Request , res : Response)
+{
+    try {
+        const results = await StudentModel.find()
+        .select('_id name')
+        .sort({name : 1})
+        .exec();
+    
+        res.status(Code.OK).json(results);
+    } catch (error) {
+        res.status(Code.INTERNAL_SERVER_ERROR).json(new HttpResponse(
+            Code.INTERNAL_SERVER_ERROR,
+            Status.INTERNAL_SERVER_ERROR,
+            "Request was not completed"
+        ));
+    }
+}
