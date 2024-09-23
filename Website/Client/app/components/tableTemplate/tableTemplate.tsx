@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import { Student } from "@/app/students/student_info";
 import { Student_Study } from "@/app/students/student_study";
@@ -24,12 +24,12 @@ const studentColumns = [
     label: "ATTENDANCE",
   },
   {
-    key: "topic",
-    label: "TOPIC",
-  },
-  {
     key: "teacher",
     label: "TEACHER",
+  },
+  {
+    key: "topic",
+    label: "TOPIC",
   },
 ];
 

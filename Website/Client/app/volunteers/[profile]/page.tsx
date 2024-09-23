@@ -5,15 +5,15 @@ import { Volunteer_Details } from "../volunteer_record"
 import { VolunteerTable } from "@/app/components/tableTemplate/tableTemplate"
 
 async function getVolunteer(profile: string | string[] | undefined): Promise<Volunteer> {
-  const res = await fetch(`http://192.168.61.30:3000/volunteer/${profile}`)
+  const res = await fetch(`${process.env.baseURL}/volunteer/${profile}`)
   const data: Volunteer = await res.json()
   return data
 }
 
 async function fetchStudentData(studentId: string) {
-  const resp = await fetch(`http://192.168.61.30:3000/student/${studentId}`)
+  const resp = await fetch(`${process.env.baseURL}${studentId}`)
   const studentProfile: Student = await resp.json()
-  return { name: studentProfile.name, url: `http://192.168.61.30:3000/student/${studentId}` }
+  return { name: studentProfile.name, url: `${process.env.baseURL}${studentId}` }
 }
 
 export default async function VolunteerPage({ params }: { params: { profile: string } }) {

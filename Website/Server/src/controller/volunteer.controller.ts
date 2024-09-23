@@ -29,6 +29,24 @@ export async function getVolunteer(req : Request , res : Response)
         const volunteerId = req.params.id;
         const volunteer = await VolunteerModel.findById(volunteerId);
         res.status(Code.OK).json(volunteer)
+    } catch (error: string | any) {
+        res.status(Code.INTERNAL_SERVER_ERROR).json(new HttpResponse(
+            Code.INTERNAL_SERVER_ERROR,
+            Status.INTERNAL_SERVER_ERROR,
+            "Request was not completed"
+        ));
+    }
+}
+
+export async function getVolunteersNames(req : Request , res : Response)
+{
+    try {
+        const results = await VolunteerModel.find()
+        .select('_id name')
+        .sort({name : 1})
+        .exec()
+    
+        res.status(Code.OK).json(results);
     } catch (error) {
         res.status(Code.INTERNAL_SERVER_ERROR).json(new HttpResponse(
             Code.INTERNAL_SERVER_ERROR,

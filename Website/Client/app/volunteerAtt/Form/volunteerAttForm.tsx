@@ -28,23 +28,28 @@ import {
 } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 
-const volunteers = [
-  { value: 'alice', label: 'Alice Johnson' },
-  { value: 'bob', label: 'Bob Smith' },
-  { value: 'charlie', label: 'Charlie Brown' },
-  { value: 'diana', label: 'Diana Ross' },
-]
+// const volunteers = [
+//   { value: 'alice', label: 'Alice Johnson' },
+//   { value: 'bob', label: 'Bob Smith' },
+//   { value: 'charlie', label: 'Charlie Brown' },
+//   { value: 'diana', label: 'Diana Ross' },
+// ]
 
-const students = [
-  { value: 'emma', label: 'Emma Watson' },
-  { value: 'frank', label: 'Frank Sinatra' },
-  { value: 'grace', label: 'Grace Kelly' },
-  { value: 'harry', label: 'Harry Potter' },
-  { value: 'ian', label: 'Ian McKellen' },
-  { value: 'julia', label: 'Julia Roberts' },
-]
+// const students = [
+//   { value: 'emma', label: 'Emma Watson' },
+//   { value: 'frank', label: 'Frank Sinatra' },
+//   { value: 'grace', label: 'Grace Kelly' },
+//   { value: 'harry', label: 'Harry Potter' },
+//   { value: 'ian', label: 'Ian McKellen' },
+//   { value: 'julia', label: 'Julia Roberts' },
+// ]
 
-export default function VolunteerAttendanceForm() {
+export default function VolunteerAttendanceForm({
+  studentNames , volunteerNames
+} : {
+  studentNames : {_id : string , name : string}[],
+  volunteerNames : {_id : string , name : string}[]
+}) {
   const [volunteer, setVolunteer] = React.useState('')
   const [openVol, setVolunteerOpen] = React.useState(false)
   const [date, setDate] = React.useState<Date>()
@@ -67,7 +72,7 @@ export default function VolunteerAttendanceForm() {
           className="w-full justify-between"
         >
           {volunteer
-            ? volunteers.find((volValue) => volValue.value === volunteer)?.label
+            ? volunteerNames.find((volValue) => volValue.name === volunteer)?.name
             : "Select Volunteer..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -78,10 +83,10 @@ export default function VolunteerAttendanceForm() {
           <CommandList>
             <CommandEmpty>No Volunteer found.</CommandEmpty>
             <CommandGroup>
-              {volunteers.map((valValue) => (
+              {volunteerNames.map((valValue) => (
                 <CommandItem
-                  key={valValue.value}
-                  value={valValue.value}
+                  key={valValue.name}
+                  value={valValue.name}
                   onSelect={(currentValue) => {
                     setVolunteer(currentValue === volunteer ? "" : currentValue)
                     setVolunteerOpen(false)
@@ -90,10 +95,10 @@ export default function VolunteerAttendanceForm() {
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      volunteer === valValue.value ? "opacity-100" : "opacity-0"
+                      volunteer === valValue.name ? "opacity-100" : "opacity-0"
                     )}
                   />
-                  {valValue.label}
+                  {valValue.name}
                 </CommandItem>
               ))}
             </CommandGroup>
@@ -141,7 +146,7 @@ export default function VolunteerAttendanceForm() {
         <div className="flex flex-wrap gap-2">
           {selectedStudents.map((student) => (
             <Badge key={student} variant="secondary">
-              {students.find((s) => s.value === student)?.label}
+              {studentNames.find((s) => s.name === student)?.name}
               <Button
                 variant="ghost"
                 size="sm"
@@ -162,7 +167,7 @@ export default function VolunteerAttendanceForm() {
               className="w-full justify-between"
             >
               {selectedStudent
-              ? students.find((s) => s.value === selectedStudent)?.label
+              ? studentNames.find((s) => s.name === selectedStudent)?.name
             : "Select Students"}
               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
@@ -173,10 +178,10 @@ export default function VolunteerAttendanceForm() {
               <CommandEmpty>No student found.</CommandEmpty>
               <CommandList>
               <CommandGroup>
-                {students.map((s) => (
+                {studentNames.map((s) => (
                   <CommandItem
-                    key={s.value}
-                    value={s.value}
+                    key={s.name}
+                    value={s.name}
                     onSelect={(currentStudent : string) => {
                       setSelectedStudents(
                         selectedStudents.includes(currentStudent)
@@ -190,10 +195,10 @@ export default function VolunteerAttendanceForm() {
                     <Check
                       className={cn(
                         "mr-2 h-4 w-4",
-                        selectedStudents.includes(s.value) ? "opacity-100" : "opacity-0"
+                        selectedStudents.includes(s.name) ? "opacity-100" : "opacity-0"
                       )}
                     />
-                    {s.label}
+                    {s.name}
                   </CommandItem>
                 ))}
               </CommandGroup>
