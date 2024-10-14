@@ -1,6 +1,6 @@
 export type Volunteer_Details = {
-    date: Date;
+    date: string;
     attendance: string;
-    students: [string];
+    students: string[];
     _id: string;
   };

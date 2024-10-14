@@ -3,7 +3,7 @@ import { Student } from "../student_info"
 import { StudentTable } from "@/app/components/tableTemplate/tableTemplate"
 
 async function getStudent(profile: string | string[] | undefined): Promise<Student> {
-  const res = await fetch(`${process.env.baseURL}/students/${profile}`)
+  const res = await fetch(`${process.env.baseURL}/students/${profile}` , {cache: 'no-cache'})
   const data: Student = await res.json()
   return data
 }

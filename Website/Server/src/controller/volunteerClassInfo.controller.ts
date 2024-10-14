@@ -10,7 +10,7 @@ export async function addVolunteerClassInfo(req : Request , res : Response)
         const volunteerId = req.body.id;
         const volunteerClassInfo = req.body.volunteerClassInfo;
 
-        const newInfo = await VolunteerModel.findByIdAndUpdate(
+        const newInfo : any = await VolunteerModel.findByIdAndUpdate(
             volunteerId,
             {
                 $push : {weekend_details : volunteerClassInfo}
@@ -20,7 +20,9 @@ export async function addVolunteerClassInfo(req : Request , res : Response)
                 runValidators: true
             }
         );
-        res.status(Code.OK).json(newInfo);
+        res.status(Code.OK).json({
+            volunteerId : newInfo['_id']
+        });
     } catch (error) {
         res.status(Code.INTERNAL_SERVER_ERROR).json(new HttpResponse(
             Code.INTERNAL_SERVER_ERROR,

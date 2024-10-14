@@ -17,6 +17,7 @@ async function fetchData() : Promise<FetchDataResult>
 
         // Getting student and teacher details
         const studentResponse = await fetch(`${baseURL}/students/getNames` , {
+            cache: 'no-cache',
             method: 'GET',
             headers : {
                 'Content-Type': 'application/json',
@@ -30,6 +31,7 @@ async function fetchData() : Promise<FetchDataResult>
         const studentNames = await studentResponse.json();
     
         const volunteerResponse = await fetch(`${baseURL}/volunteer/getNames` , {
+            cache: 'no-cache',
             method: 'GET',
             headers : {
                 'Content-Type': 'application/json',
@@ -54,6 +56,11 @@ export default async function volunteerAttPage(){
    const {studentNames , volunteerNames} = await fetchData()
     
     return (
-        <VolunteerAttendanceForm studentNames={studentNames} volunteerNames={volunteerNames} />
+        <div className="flex items-center justify-center bg-[url('/IMG-20240311-WA0008.jpg')] bg-cover bg-center bg-no-repeat">
+            <div className="w-1/3 m-20  mt-20">
+            <VolunteerAttendanceForm studentNames={studentNames} volunteerNames={volunteerNames} />
+            </div>
+        </div>
+        
     )
 }
