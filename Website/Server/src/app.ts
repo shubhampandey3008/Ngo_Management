@@ -1,10 +1,15 @@
 import cors from "cors";
+import './config/config'
 import express, { Application } from "express";
 import ip from "ip";
 import { Code } from "./enum/Code";
 import { Status } from "./enum/Status";
 import { HttpResponse } from "./domain/response";
-import patientRoutes from "./routes/patients.routes";
+import studentRoutes from "./routes/student.routes";
+import mongoose from "mongoose";
+import { studentStudyRoutes } from "./routes/studentStudy.routes";
+import volunteerRoutes from "./routes/volunteer.routes";
+import volunteerClassRoutes from "./routes/volunteerClassInfo.routes";
 
 export class App {
   private readonly app: Application;
@@ -20,12 +25,19 @@ export class App {
   }
 
   listen(): void {
-    this.app.listen(this.port);
-    console.info(`${this.APPLICATION_RUNNING} ${ip.address()} : ${this.port}`);
+    mongoose.connect(process.env.MONGO_STRING || "")
+    .then(()=>{
+      console.log("Connected to Database")
+      this.app.listen(this.port);
+      console.info(`${this.APPLICATION_RUNNING} ${ip.address()} : ${this.port}`);
+    })
   }
 
   private routes(): void {
-    this.app.use("/patients", patientRoutes);
+    this.app.use("/students", studentRoutes);
+    this.app.use("/studentStudy" , studentStudyRoutes);
+    this.app.use("/volunteer" , volunteerRoutes);
+    this.app.use("/volunteerClassInfo" , volunteerClassRoutes);
     this.app.get("/", (req, res) => {
       res
         .status(Code.OK)
@@ -46,6 +58,6 @@ export class App {
 
   private middleWare(): void {
     this.app.use(cors({ origin: "*" }));
-    this.app.use(express.json());
+    this.app.use(express.json({limit : '2mb'}));
   }
 }
