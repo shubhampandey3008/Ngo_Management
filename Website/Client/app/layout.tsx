@@ -4,6 +4,8 @@ import "./globals.css";
 import "./css/base.css";
 import "./css/embla.css";
 import Footer from "./components/footer/Footer";
+import Navbar from "./components/navbar/Navbar";
+import { SessionProvider } from 'next-auth/react';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,24 +20,29 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <head>
-        {/* Import the "Bebas Neue" font from Google Fonts */}
-        <link
-          href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap"
-          rel="stylesheet"
-        />
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1.0"
-        ></meta>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
-          rel="stylesheet"
-        ></link>
-      </head>
-      <body className={inter.className}>{children}</body>
-      <Footer />
-    </html>
+    <SessionProvider>
+      <html lang="en">
+        <head>
+          {/* Import the "Bebas Neue" font from Google Fonts */}
+          <link
+            href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap"
+            rel="stylesheet"
+          />
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+          ></meta>
+          <link
+            href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
+            rel="stylesheet"
+          ></link>
+        </head>
+        <body className={inter.className}>
+          <Navbar />
+          {children}
+          <Footer />
+        </body>
+      </html>
+    </SessionProvider>
   );
 }
