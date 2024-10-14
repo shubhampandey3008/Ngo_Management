@@ -38,6 +38,7 @@ export default function VolunteerProfileForm() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isImageSelected, setIsImageSelected] = useState(false)
   const [isCropped, setIsCropped] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const imgRef = useRef<HTMLImageElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -159,6 +160,7 @@ export default function VolunteerProfileForm() {
     })
 
     if (Object.keys(newErrors).length === 0) {
+      setIsSubmitting(true)
       try {
         if (!image || !isCropped) {
           throw new Error('Image not selected or not cropped')
@@ -191,6 +193,7 @@ export default function VolunteerProfileForm() {
 
         alert('Form submitted successfully!')
       } catch (error) {
+        setIsSubmitting(false)
         console.error('Error submitting form:', error)
         alert('An error occurred while submitting the form. Please try again.')
       }
@@ -203,7 +206,7 @@ export default function VolunteerProfileForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 max-w-md mx-auto p-6 border border-black rounded-lg shadow-lg">
+    <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-6 p-6 bg-white rounded-lg shadow border border-black rounded-lg shadow-lg">
       <div className="flex flex-col items-center">
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
@@ -341,7 +344,13 @@ export default function VolunteerProfileForm() {
           <p id="doj-error" className="text-red-500 text-sm mt-1">{errors.doj}</p>
         )}
       </div>
-      <Button type="submit" className="w-full">Submit</Button>
+      <Button 
+        type="submit" 
+        disabled={isSubmitting}
+        className={`w-full ${isSubmitting ? 'bg-gray-400' : 'bg-primary'}`}
+      >
+        {isSubmitting ? 'Adding...' : 'Add Volunteer'}
+      </Button>
     </form>
   )
 }

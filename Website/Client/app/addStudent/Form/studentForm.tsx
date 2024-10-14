@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useCallback, useRef } from 'react'
+import DatePicker from 'react-datepicker'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -13,6 +14,9 @@ import ReactCrop, { type Crop, type PixelCrop, centerCrop, makeAspectCrop } from
 import 'react-image-crop/dist/ReactCrop.css'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useRouter } from 'next/navigation'
+
+// Need to import the CSS for react-datepicker
+import 'react-datepicker/dist/react-datepicker.css'
 
 
 type ValidationErrors = {
@@ -30,7 +34,7 @@ export default function StudentProfileForm() {
   const [name, setName] = useState('')
   const [className, setClassName] = useState('')
   const [motherName, setMotherName] = useState('')
-  const [dob, setDob] = useState<Date | undefined>()
+  const [dob, setDob] = useState<Date | null>();
   const [doj, setDoj] = useState<Date | undefined>()
   const [image, setImage] = useState<string | null>(null)
   const [crop, setCrop] = useState<Crop>()
@@ -40,6 +44,7 @@ export default function StudentProfileForm() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isImageSelected, setIsImageSelected] = useState(false)
   const [isCropped, setIsCropped] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const imgRef = useRef<HTMLImageElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -56,6 +61,12 @@ export default function StudentProfileForm() {
       reader.readAsDataURL(e.target.files[0])
     }
   }
+
+  const years = Array.from({ length: 125 }, (_, i) => new Date().getFullYear() - i)
+  const months = [
+    "January", "February", "March", "April", "May", "June", 
+    "July", "August", "September", "October", "November", "December"
+  ]
 
   const onImageLoad = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
     const { width, height } = e.currentTarget
@@ -143,6 +154,7 @@ export default function StudentProfileForm() {
     if (!className.trim()) newErrors.className = 'Class is required'
     if (!motherName.trim()) newErrors.motherName = "Mother's name is required"
     if (!dob) newErrors.dob = 'Date of birth is required'
+    else if(dob > new Date()) newErrors.dob = 'Date of birth cannot be in future'
     if (!doj) newErrors.doj = 'Date of joining is required'
     if (!image || !isCropped) newErrors.profilePicture = 'Please select and crop a profile picture'
     return newErrors
@@ -162,6 +174,7 @@ export default function StudentProfileForm() {
     })
 
     if (Object.keys(newErrors).length === 0) {
+      setIsSubmitting(true)
       try {
         if (!image || !isCropped) {
           throw new Error('Image not selected or not cropped')
@@ -201,6 +214,7 @@ export default function StudentProfileForm() {
 
         alert('Form submitted successfully!')
       } catch (error) {
+        setIsSubmitting(false)
         console.error('Error submitting form:', error)
         alert('An error occurred while submitting the form. Please try again.')
       }
@@ -212,8 +226,12 @@ export default function StudentProfileForm() {
     setErrors(validateForm())
   }
 
+  const handleDateChange = (date: Date | null) => {
+    setDob(date)
+  }
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 max-w-md mx-auto p-6 border border-black rounded-lg shadow-lg">
+    <form onSubmit={handleSubmit} className="space-y-6 max-w-md mx-auto p-6 bg-white border border-black rounded-lg shadow-lg">
       <div className="flex flex-col items-center">
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
@@ -305,7 +323,7 @@ export default function StudentProfileForm() {
         )}
       </div>
       <div>
-        <Label htmlFor="motherName">Mother's Name</Label>
+        <Label htmlFor="motherName">Mothers Name</Label>
         <Input
           id="motherName"
           value={motherName}
@@ -320,7 +338,7 @@ export default function StudentProfileForm() {
         )}
       </div>
       <div>
-        <Label>Date of Birth</Label>
+        {/* <Label>Date of Birth</Label>
         <Popover>
           <PopoverTrigger asChild>
             <Button
@@ -351,7 +369,94 @@ export default function StudentProfileForm() {
         </Popover>
         {touched.dob && errors.dob && (
           <p id="dob-error" className="text-red-500 text-sm mt-1">{errors.dob}</p>
-        )}
+        )} */}
+        <Label htmlFor="dob">Date of Birth</Label>
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            id="dob"
+            variant="outline"
+            className={`w-full justify-start text-left font-normal ${
+              !dob ? "text-muted-foreground" : ""
+            } ${touched.dob && errors.dob ? 'border-red-500' : ''}`}
+            onBlur={() => handleBlur('dob')}
+            aria-invalid={touched.dob && errors.dob ? 'true' : 'false'}
+            aria-describedby={touched.dob && errors.dob ? 'dob-error' : undefined}
+          >
+            {dob ? format(dob, "yyyy/MM/dd") : "Pick a date"}
+            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="start">
+          <DatePicker
+            selected={dob}
+            onChange={handleDateChange}
+            dateFormat="yyyy/MM/dd"
+            showYearDropdown
+            scrollableYearDropdown
+            yearDropdownItemNumber={100}
+            dropdownMode="select"
+            renderCustomHeader={({
+              date,
+              changeYear,
+              changeMonth,
+              decreaseMonth,
+              increaseMonth,
+              prevMonthButtonDisabled,
+              nextMonthButtonDisabled,
+            }) => (
+              <div className="flex justify-between px-2 py-2">
+                <Button
+                  onClick={decreaseMonth}
+                  disabled={prevMonthButtonDisabled}
+                  size="sm"
+                  variant="outline"
+                >
+                  {"<"}
+                </Button>
+                <select
+                  value={date.getFullYear()}
+                  onChange={({ target: { value } }) => changeYear(Number(value))}
+                  className="text-sm bg-transparent"
+                  aria-label="Select year"
+                >
+                  {years.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  value={months[date.getMonth()]}
+                  onChange={({ target: { value } }) =>
+                    changeMonth(months.indexOf(value))
+                  }
+                  className="text-sm bg-transparent"
+                  aria-label="Select month"
+                >
+                  {months.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+                <Button
+                  onClick={increaseMonth}
+                  disabled={nextMonthButtonDisabled}
+                  size="sm"
+                  variant="outline"
+                >
+                  {">"}
+                </Button>
+              </div>
+            )}
+            inline
+          />
+        </PopoverContent>
+      </Popover>
+      {touched.dob && errors.dob && (
+        <p id="dob-error" className="text-red-500 text-sm mt-1">{errors.dob}</p>
+      )}
       </div>
       <div>
         <Label>Date of Joining</Label>
@@ -387,7 +492,13 @@ export default function StudentProfileForm() {
           <p id="doj-error" className="text-red-500 text-sm mt-1">{errors.doj}</p>
         )}
       </div>
-      <Button type="submit" className="w-full">Submit</Button>
+      <Button 
+        type="submit" 
+        disabled={isSubmitting}
+        className={`w-full ${isSubmitting ? 'bg-gray-400' : 'bg-primary'}`}
+      >
+        {isSubmitting ? 'Adding...' : 'Add Student'}
+      </Button>
     </form>
   )
 }

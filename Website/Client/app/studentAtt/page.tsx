@@ -17,6 +17,7 @@ async function fetchData() : Promise<FetchDataResult>
 
         // Getting student and teacher details
         const studentResponse = await fetch(`${baseURL}/students/getNames` , {
+            cache: 'no-cache',
             method: 'GET',
             headers : {
                 'Content-Type': 'application/json',
@@ -54,6 +55,10 @@ export default async function addStudentAttendancePage()
     const {studentNames , teacherNames} = await fetchData()
 
     return (
-        <StudentAttendanceForm studentNames={studentNames} teacherNames={teacherNames}/>
+        <div className="flex items-center justify-center bg-[url('/20240804_164455.jpg')] bg-cover bg-center bg-no-repeat">
+            <div className="w-1/3 m-10 mt-20">
+                <StudentAttendanceForm studentNames={studentNames} teacherNames={teacherNames}/>
+            </div>
+        </div>
     )
 }

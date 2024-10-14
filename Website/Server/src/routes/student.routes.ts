@@ -4,7 +4,7 @@ import { createStudent, getStudent, getStudentNames } from "../controller/studen
 const studentRoutes = Router();
 
 studentRoutes.get("/getNames" , getStudentNames);
-studentRoutes.get("/:id" , getStudent);
 studentRoutes.post("/create" , createStudent);
+studentRoutes.get("/:id" , getStudent);
 
 export default studentRoutes;

@@ -27,85 +27,124 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
-
-// const volunteers = [
-//   { value: 'alice', label: 'Alice Johnson' },
-//   { value: 'bob', label: 'Bob Smith' },
-//   { value: 'charlie', label: 'Charlie Brown' },
-//   { value: 'diana', label: 'Diana Ross' },
-// ]
-
-// const students = [
-//   { value: 'emma', label: 'Emma Watson' },
-//   { value: 'frank', label: 'Frank Sinatra' },
-//   { value: 'grace', label: 'Grace Kelly' },
-//   { value: 'harry', label: 'Harry Potter' },
-//   { value: 'ian', label: 'Ian McKellen' },
-//   { value: 'julia', label: 'Julia Roberts' },
-// ]
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { useRouter } from 'next/navigation'
 
 export default function VolunteerAttendanceForm({
-  studentNames , volunteerNames
-} : {
-  studentNames : {_id : string , name : string}[],
-  volunteerNames : {_id : string , name : string}[]
+  studentNames,
+  volunteerNames
+}: {
+  studentNames: { _id: string; name: string }[];
+  volunteerNames: { _id: string; name: string }[];
 }) {
+  const router = useRouter();
   const [volunteer, setVolunteer] = React.useState('')
+  const [volunteerId, setVolunteerId] = React.useState('')
   const [openVol, setVolunteerOpen] = React.useState(false)
   const [date, setDate] = React.useState<Date>()
   const [attendance, setAttendance] = React.useState('')
   const [selectedStudent, setSelectedStudent] = React.useState('')
-  const [selectedStudents , setSelectedStudents] = React.useState<string[]>([])
-  const [openStudent , setStudentOpen] = React.useState(false)
+  const [selectedStudents, setSelectedStudents] = React.useState<string[]>([])
+  const [selectedStudentIds, setSelectedStudentIds] = React.useState<string[]>([])
+  const [openStudent, setStudentOpen] = React.useState(false)
+  const [showSuccessMessage, setShowSuccessMessage] = React.useState(false)
+
+  const resetForm = () => {
+    setVolunteer('')
+    setVolunteerId('')
+    setDate(undefined)
+    setAttendance('')
+    setSelectedStudent('')
+    setSelectedStudents([])
+    setSelectedStudentIds([])
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    const data = {
+      date: date ? format(date, 'yyyy/MM/dd') : '',
+      attendance : attendance,
+      students: selectedStudentIds,
+    }
+
+    try {
+      const response = await fetch('/api/saveVolunteerAttendance', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          volunteerId : volunteerId,
+          data : data
+        })
+      })
+
+      if (response.ok) {
+        setShowSuccessMessage(true)
+        resetForm()
+        setTimeout(() => setShowSuccessMessage(false), 5000) // Hide message after 5 seconds
+      } else {
+        throw new Error('Failed to save data')
+      }
+
+      router.push(response.url)
+
+    } catch (error) {
+      console.error('Error saving data:', error)
+      // You might want to show an error message to the user here
+    }
+  }
 
   return (
-    <div className="max-w-md mx-auto space-y-6 p-6 bg-white rounded-lg shadow">
+    <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-6 p-6 bg-white rounded-lg shadow">
       <h2 className="text-2xl font-bold mb-4">Volunteer Attendance Form</h2>
 
       {/* Volunteer Selection */}
       <Popover open={openVol} onOpenChange={setVolunteerOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={openVol}
-          className="w-full justify-between"
-        >
-          {volunteer
-            ? volunteerNames.find((volValue) => volValue.name === volunteer)?.name
-            : "Select Volunteer..."}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
-        <Command>
-          <CommandInput placeholder="Search Volunteer..." />
-          <CommandList>
-            <CommandEmpty>No Volunteer found.</CommandEmpty>
-            <CommandGroup>
-              {volunteerNames.map((valValue) => (
-                <CommandItem
-                  key={valValue.name}
-                  value={valValue.name}
-                  onSelect={(currentValue) => {
-                    setVolunteer(currentValue === volunteer ? "" : currentValue)
-                    setVolunteerOpen(false)
-                  }}
-                >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      volunteer === valValue.name ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                  {valValue.name}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={openVol}
+            className="w-full justify-between"
+          >
+            {volunteer
+              ? volunteerNames.find((volValue) => volValue.name === volunteer)?.name
+              : "Select Volunteer..."}
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-[200px] p-0">
+          <Command>
+            <CommandInput placeholder="Search Volunteer..." />
+            <CommandList>
+              <CommandEmpty>No Volunteer found.</CommandEmpty>
+              <CommandGroup>
+                {volunteerNames.map((valValue) => (
+                  <CommandItem
+                    key={valValue._id}
+                    value={valValue.name}
+                    onSelect={(currentValue) => {
+                      setVolunteer(currentValue === volunteer ? "" : currentValue)
+                      setVolunteerId(valValue._id)
+                      setVolunteerOpen(false)
+                    }}
+                  >
+                    <Check
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        volunteer === valValue.name ? "opacity-100" : "opacity-0"
+                      )}
+                    />
+                    {valValue.name}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
 
       {/* Date Selection */}
       <Popover>
@@ -151,14 +190,17 @@ export default function VolunteerAttendanceForm({
                 variant="ghost"
                 size="sm"
                 className="ml-2 h-4 w-4 p-0"
-                onClick={() => setSelectedStudents(selectedStudents.filter(s => s !== student))}
+                onClick={() => {
+                  setSelectedStudents(selectedStudents.filter(s => s !== student))
+                  setSelectedStudentIds(selectedStudentIds.filter(id => id !== studentNames.find(s => s.name === student)?._id))
+                }}
               >
                 <X className="h-3 w-3" />
               </Button>
             </Badge>
           ))}
         </div>
-        <Popover open = {openStudent} onOpenChange={setStudentOpen} >
+        <Popover open={openStudent} onOpenChange={setStudentOpen}>
           <PopoverTrigger asChild>
             <Button
               variant="outline"
@@ -167,8 +209,8 @@ export default function VolunteerAttendanceForm({
               className="w-full justify-between"
             >
               {selectedStudent
-              ? studentNames.find((s) => s.name === selectedStudent)?.name
-            : "Select Students"}
+                ? studentNames.find((s) => s.name === selectedStudent)?.name
+                : "Select Students"}
               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
           </PopoverTrigger>
@@ -177,31 +219,36 @@ export default function VolunteerAttendanceForm({
               <CommandInput placeholder="Search students..." />
               <CommandEmpty>No student found.</CommandEmpty>
               <CommandList>
-              <CommandGroup>
-                {studentNames.map((s) => (
-                  <CommandItem
-                    key={s.name}
-                    value={s.name}
-                    onSelect={(currentStudent : string) => {
-                      setSelectedStudents(
-                        selectedStudents.includes(currentStudent)
-                          ? selectedStudents.filter((item) => item !== currentStudent)
-                          : [...selectedStudents, currentStudent]
-                      )
-                      setSelectedStudent(currentStudent===selectedStudent ? "" : currentStudent)
-                      setStudentOpen(false)
-                    }}
-                  >
-                    <Check
-                      className={cn(
-                        "mr-2 h-4 w-4",
-                        selectedStudents.includes(s.name) ? "opacity-100" : "opacity-0"
-                      )}
-                    />
-                    {s.name}
-                  </CommandItem>
-                ))}
-              </CommandGroup>
+                <CommandGroup>
+                  {studentNames.map((s) => (
+                    <CommandItem
+                      key={s._id}
+                      value={s.name}
+                      onSelect={(currentStudent: string) => {
+                        setSelectedStudents(
+                          selectedStudents.includes(currentStudent)
+                            ? selectedStudents.filter((item) => item !== currentStudent)
+                            : [...selectedStudents, currentStudent]
+                        )
+                        setSelectedStudentIds(
+                          selectedStudentIds.includes(s._id)
+                            ? selectedStudentIds.filter((id) => id !== s._id)
+                            : [...selectedStudentIds, s._id]
+                        )
+                        setSelectedStudent(currentStudent === selectedStudent ? "" : currentStudent)
+                        setStudentOpen(false)
+                      }}
+                    >
+                      <Check
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          selectedStudents.includes(s.name) ? "opacity-100" : "opacity-0"
+                        )}
+                      />
+                      {s.name}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
               </CommandList>
             </Command>
           </PopoverContent>
@@ -209,6 +256,14 @@ export default function VolunteerAttendanceForm({
       </div>
 
       <Button className="w-full" type="submit">Submit</Button>
-    </div>
+
+      {showSuccessMessage && (
+        <Alert className="mt-4 bg-green-100 border-green-400 text-green-700">
+          <AlertDescription>
+            Volunteer attendance submitted successfully!
+          </AlertDescription>
+        </Alert>
+      )}
+    </form>
   )
 }
