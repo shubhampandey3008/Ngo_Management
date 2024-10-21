@@ -1,10 +1,32 @@
-import {NextResponse} from 'next/server'
+import {NextRequest, NextResponse} from 'next/server'
+
+export async function GET(request : NextRequest){
+    try {
+        const searchParams = request.nextUrl.searchParams;
+        const profile = searchParams.get('profile');
+        console.log("profile" , profile)
+
+        const response = await fetch(`${process.env.baseURL}/volunteer/${profile}` , {
+            method : 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+              }
+        })
+        
+        const volunteerData = await response.json();
+    return NextResponse.json(volunteerData);
+    } catch (error) {
+      console.error('Error processing Volunteer data:', error)
+      return NextResponse.json({ error: 'Failed to process Volunteer data' }, { status: 500 })
+    }
+}
+
 
 export async function POST(request : Request){
     try {
         const data = await request.json();
 
-        const response = await fetch("http://192.168.1.9:3000/volunteer/create" , {
+        const response = await fetch(`${process.env.baseURL}/volunteer/create` , {
             method : 'POST',
             headers: {
                 'Content-Type': 'application/json',

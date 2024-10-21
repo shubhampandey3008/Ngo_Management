@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Menu, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { useSession } from 'next-auth/react'
@@ -13,15 +13,6 @@ export default function Navbar() {
   const { data: session, status, update } = useSession()
   const router = useRouter()
   const [isClick, setIsClick] = useState(false)
-  //const [isScrolled, setIsScrolled] = useState(false) //Removed isScrolled
-
-  // useEffect(() => {
-  //   const handleScroll = () => {
-  //     setIsScrolled(window.scrollY > 0)
-  //   }
-  //   window.addEventListener('scroll', handleScroll)
-  //   return () => window.removeEventListener('scroll', handleScroll)
-  // }, []) //Removed useEffect
 
   const toggleNavbar = () => {
     setIsClick(!isClick)
@@ -44,7 +35,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-black bg-opacity-70"> {/* Updated nav className */}
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-black bg-opacity-70">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <div className="flex items-center">
@@ -54,18 +45,20 @@ export default function Navbar() {
           </div>
           <div className="hidden md:block">
             <div className="ml-4 flex items-center space-x-4">
-              <NavLink href="/">About us</NavLink>
-              <NavLink href="/">Our work</NavLink>
+              <NavLink href="/">Home</NavLink>
+              <NavLink href="/ourWork">Our work</NavLink>
+              <NavLink href="/volunteerList">Our Team</NavLink>
               {session && (
                 <>
                   <NavLink href="/addVolunteer">Add Volunteer</NavLink>
                   <NavLink href="/addStudent">Add Student</NavLink>
+                  <NavLink href="/studentList">Students</NavLink>
                 </>
               )}
-              <AttendanceMenu />
+              <AttendanceMenu session={session} />
               {status === 'authenticated' ? (
                 <form onSubmit={logout}>
-                  <button type="submit" className="text-white hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-lg font-bold transition-colors duration-200"> {/* Updated logout button className */}
+                  <button type="submit" className="text-white hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-lg font-bold transition-colors duration-200">
                     Logout
                   </button>
                 </form>
@@ -97,13 +90,15 @@ export default function Navbar() {
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             <NavLink href="/" mobile>About us</NavLink>
             <NavLink href="/" mobile>Our work</NavLink>
+            <NavLink href="/volunteerList" mobile>Our Team</NavLink>
             {session && (
               <>
                 <NavLink href="/addVolunteer" mobile>Add Volunteer</NavLink>
                 <NavLink href="/addStudent" mobile>Add Student</NavLink>
+                <NavLink href="/studentList" mobile>Students</NavLink>
               </>
             )}
-            <AttendanceMenu mobile />
+            <AttendanceMenu session={session} mobile />
           </div>
         </div>
       )}
@@ -121,7 +116,7 @@ function NavLink({ href, children, mobile = false }: { href: string; children: R
   )
 }
 
-function AttendanceMenu({ mobile = false }: { mobile?: boolean }) {
+function AttendanceMenu({ session, mobile = false }: { session: any; mobile?: boolean }) {
   return (
     <Menu as="div" className={`relative inline-block text-left ${mobile ? 'w-full' : ''}`}>
       <div>
@@ -141,7 +136,7 @@ function AttendanceMenu({ mobile = false }: { mobile?: boolean }) {
         <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
           <div className="px-1 py-1">
             <MenuItem href="/studentAtt">Student</MenuItem>
-            <MenuItem href="/volunteerAtt">Volunteer</MenuItem>
+            {session && <MenuItem href="/volunteerAtt">Volunteer</MenuItem>}
           </div>
         </Menu.Items>
       </Transition>

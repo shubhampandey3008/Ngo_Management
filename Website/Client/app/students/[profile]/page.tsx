@@ -13,7 +13,7 @@ export default async function StudentPage({ params }: { params: { profile: strin
   const student: Student = await getStudent(studentId)
 
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div className="container mx-auto py-8 px-4 mt-20">
       <div className="bg-white shadow-lg rounded-lg overflow-hidden">
         <div className="bg-primary text-primary-foreground p-6">
           <h1 className="text-3xl font-bold text-center">Student Profile</h1>

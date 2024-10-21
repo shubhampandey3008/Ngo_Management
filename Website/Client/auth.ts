@@ -12,11 +12,11 @@ export const { handlers , signIn , signOut , auth} = NextAuth({
                 let user = null;
 
                 user = {
-                    email : "abc@gmail.com",
-                    password : "password"
+                    email : "kritanshngo@gmail.com",
+                    password : "Kritansh@123"
                 }
 
-                if(!user){
+                if(credentials.email != "kritanshngo@gmail.com" || credentials.password != "Kritansh@123"){
                     console.log("Invalid creds")
                     return null;
                 }
