@@ -1,4 +1,4 @@
-export default function volunteerAttLayout({
+export default function volunteerListLayout({
     children
 } : {children : React.ReactNode}){
 
