@@ -55,3 +55,43 @@ export async function getVolunteersNames(req : Request , res : Response)
         ));
     }
 }
+
+export async function filterVolunteer(req : Request , res: Response)
+{
+    const nameFilter = req.body.nameFilter;
+    const emailFilter = req.body.emailFilter;
+    const numberFilter = req.body.numberFilter;
+    const limit = req.body.limit;
+    const page = req.body.page;
+    const skip = (page-1) * limit;
+
+    console.log("name" , nameFilter)
+    console.log("email" , emailFilter)
+    console.log("number" , numberFilter)
+    console.log("limit" , limit)
+    console.log("page" , skip)
+    const query = {
+        name: { $regex: nameFilter, $options: 'i' },
+        email: { $regex: emailFilter, $options: 'i' }
+      }
+
+    try {
+        const volunteers = await VolunteerModel.find(query)
+        .skip(skip)
+        .limit(limit)
+    
+        const totalVolunteers = await VolunteerModel.countDocuments(query);
+        console.log("number of volunteers returned " , totalVolunteers)
+    
+        res.status(Code.OK).json({
+            volunteers : volunteers,
+            hasMore: totalVolunteers > skip + volunteers.length
+        })
+    } catch (error) {
+        res.status(Code.INTERNAL_SERVER_ERROR).json(new HttpResponse(
+            Code.INTERNAL_SERVER_ERROR,
+            Status.INTERNAL_SERVER_ERROR,
+            "Request was not completed"
+        ));
+    }
+}
